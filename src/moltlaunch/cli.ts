@@ -1,12 +1,46 @@
 import { execFile } from "node:child_process";
+import fs from "node:fs";
+import path from "node:path";
 import { promisify } from "node:util";
 import type { Task, Bounty, WalletInfo, RegisterResult, AgentInfo } from "./types.js";
 
 const execFileAsync = promisify(execFile);
 
-const MLTL_BIN = "mltl";
 const DEFAULT_TIMEOUT = 30_000;
 const REGISTER_TIMEOUT = 120_000;
+
+interface MltlInvocationOptions {
+  platform: NodeJS.Platform;
+  appData?: string;
+  nodeExecutable: string;
+  fileExists: (candidate: string) => boolean;
+}
+
+interface MltlInvocation {
+  executable: string;
+  prefixArgs: string[];
+}
+
+export function resolveMltlInvocation(
+  options: MltlInvocationOptions,
+): MltlInvocation {
+  if (options.platform === "win32" && options.appData) {
+    const entry = path.win32.join(
+      options.appData,
+      "npm",
+      "node_modules",
+      "moltlaunch",
+      "dist",
+      "index.js",
+    );
+
+    if (options.fileExists(entry)) {
+      return { executable: options.nodeExecutable, prefixArgs: [entry] };
+    }
+  }
+
+  return { executable: "mltl", prefixArgs: [] };
+}
 
 interface CliError {
   error: string;
@@ -18,11 +52,22 @@ async function mltl<T>(
   timeout = DEFAULT_TIMEOUT,
 ): Promise<T> {
   try {
-    // --json is a per-subcommand flag, appended at the end
-    const { stdout } = await execFileAsync(MLTL_BIN, [...args, "--json"], {
-      timeout,
-      env: { ...process.env },
+    const invocation = resolveMltlInvocation({
+      platform: process.platform,
+      appData: process.env.APPDATA,
+      nodeExecutable: process.execPath,
+      fileExists: fs.existsSync,
     });
+
+    // --json is a per-subcommand flag, appended at the end
+    const { stdout } = await execFileAsync(
+      invocation.executable,
+      [...invocation.prefixArgs, ...args, "--json"],
+      {
+        timeout,
+        env: { ...process.env },
+      },
+    );
 
     const parsed = JSON.parse(stdout.trim()) as T | CliError;
 
