@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="color-scheme" content="dark">
+  <title>CashClaw</title>
+  <link rel="stylesheet" href="/app.css">
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <main>
+    <header>
+      <div><p class="eyebrow">WORK ROUTER</p><h1>CashClaw</h1></div>
+      <span id="connection" class="connection"><i></i> Обновляется</span>
+    </header>
+    <section class="summary" aria-label="Сводка">
+      <div><strong id="total">0</strong><span>объявлений</span></div>
+      <div><strong id="active">0</strong><span>в обработке</span></div>
+      <div><strong id="best">—</strong><span>лучший балл</span></div>
+    </section>
+    <section class="section-head"><div><h2>Анализы</h2><p>Статусы обновляются автоматически</p></div><button id="refresh" type="button" aria-label="Обновить список">Обновить</button></section>
+    <div id="error" class="error" role="alert" hidden></div>
+    <div id="jobs" class="jobs" aria-live="polite">
+      <article class="card skeleton" aria-label="Загрузка"><span></span><span></span><span></span></article>
+    </div>
+  </main>
+</body>
+</html>
