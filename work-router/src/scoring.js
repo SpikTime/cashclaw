@@ -18,6 +18,7 @@ function mismatchReason(text) {
 export function determineEligibility(item) {
   const text = `${item.title || ""} ${item.description || ""}`.toLowerCase();
   if (item.rejected || ["SPAM", "SELF_PROMOTION"].includes(item.classification)) return { eligibility: Eligibility.SUPPRESSED, suppressedReason: item.rejectionReason || "spam_or_self_promotion" };
+  if (text.length > 1200 && /(?:давайте разбер|рекомендации для|итог:|conclusion:|a guide to)/iu.test(text)) return { eligibility: Eligibility.SUPPRESSED, suppressedReason: "non_opportunity_content" };
   if (item.acquisitionModel === "bounty" && item.rewardTrust?.manualReview) return { eligibility: Eligibility.MANUAL_REVIEW, suppressedReason: null };
   if (item.classification === "FULL_TIME_JOB" && !item.allowFullTime) return { eligibility: Eligibility.SUPPRESSED, suppressedReason: "full_time_job" };
   if (LEAD_ROLE.test(text)) return { eligibility: Eligibility.SUPPRESSED, suppressedReason: "seniority_mismatch" };
@@ -75,7 +76,7 @@ export function scoreOpportunity(item) {
   if (components.monetary >= 10) scoreReasons.push("useful stated budget"); else if (!item.budget) scoreReasons.push("budget not stated");
   if (components.clarity >= 4) scoreReasons.push("clear scope and delivery signals");
   scoreReasons.push(...risk.reasons);
-  return { ...item, score, preliminaryScore: score, scoreBreakdown, eligibility, suppressedReason, scoreReasons, scoringVersion: 4 };
+  return { ...item, score, preliminaryScore: score, scoreBreakdown, eligibility, suppressedReason, scoreReasons, scoringVersion: 5 };
 }
 
 export function distributionStats(values) {
