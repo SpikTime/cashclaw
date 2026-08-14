@@ -13,7 +13,7 @@ export function parseEnv(text) {
   return values;
 }
 
-export function loadConfig(root = process.cwd()) {
+export function loadConfig(root = process.env.CASHCLAW_CONFIG_ROOT || process.cwd()) {
   const file = path.join(root, ".env");
   const env = { ...parseEnv(fs.readFileSync(file, "utf8")), ...process.env };
   const required = ["LLM_BASE_URL", "LLM_API_KEY", "LLM_MODEL", "TELEGRAM_BOT_TOKEN"];
