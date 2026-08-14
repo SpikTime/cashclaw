@@ -3,14 +3,14 @@ import path from "node:path";
 import { classifyOpportunity } from "./classifier.js";
 import { scoreOpportunity } from "./scoring.js";
 
-export const CURRENT_STATE_VERSION = 4;
+export const CURRENT_STATE_VERSION = 5;
 const defaults = () => ({ version: CURRENT_STATE_VERSION, seen: [], jobs: [], opportunities: [], duplicateGroups: [], sources: [], outbox: [], cycles: [], maybeDigest: [], llmDate: "", llmCount: 0, telegramOffset: 0 });
 export function migrateState(input = {}) {
   const previousVersion = Number(input?.version || 0);
   const state = { ...defaults(), ...(input && typeof input === "object" ? input : {}) };
   for (const key of ["seen", "jobs", "opportunities", "duplicateGroups", "sources", "outbox", "cycles", "maybeDigest"]) if (!Array.isArray(state[key])) state[key] = [];
   state.outbox = state.outbox.map((item) => item.status === "sending" ? { ...item, status: "retry", nextAttemptAt: new Date(0).toISOString() } : item);
-  if (previousVersion < 4) state.opportunities = state.opportunities.map((item) => {
+  if (previousVersion < 5) state.opportunities = state.opportunities.map((item) => {
     const legacyScore = Number.isFinite(item.score) ? item.score : Number.isFinite(item.preliminaryScore) ? item.preliminaryScore : null;
     const classified = classifyOpportunity(item);
     return { ...scoreOpportunity(classified), ...(legacyScore == null ? {} : { legacyScore }) };

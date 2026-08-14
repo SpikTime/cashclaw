@@ -20,7 +20,7 @@ export function classifyOpportunity(item, now = new Date()) {
   else if (/партн[её]р|partnership/iu.test(text)) classification = OpportunityType.PARTNERSHIP;
   else if (/bounty|награда за issue/iu.test(text) || item.acquisitionModel === "bounty") classification = OpportunityType.BOUNTY;
   else if (/part[- ]?time|частичн(?:ая|ой) занятост|contractor/iu.test(text)) classification = OpportunityType.PART_TIME_CONTRACT;
-  else if (/full[- ]?time|fulltime|полная занятость|5\s*\/\s*2|в штат|постоянн(?:ая|ую) работ|salary per month|зарплат|оклад|трудоустройств|оформление (?:по )?тк|график по мск|employment|vacancy|вакансия/iu.test(text)) classification = OpportunityType.FULL_TIME_JOB;
+  else if (/full[- ]?time|fulltime|фуллтайм|полная занятость|5\s*\/\s*2|в штат|постоянн(?:ая|ую) работ|salary per month|зарплат|оклад|трудоустройств|оформление (?:по )?тк|график по мск|employment|vacancy|вакансия/iu.test(text)) classification = OpportunityType.FULL_TIME_JOB;
   else if (/срочно|на (?:день|недел)|коротк(?:ий|ая) проект/iu.test(text) && includesAny(text, PROJECT)) classification = OpportunityType.SHORT_PROJECT;
   else if (includesAny(text, PROJECT) || /(?:создать|разработать|сделать|спарсить|парсинг|парсер|нужен|нужно|оплата|проект)/iu.test(text)) classification = OpportunityType.ONE_OFF_PROJECT;
   const techStack = [...new Set(SKILLS.filter((skill) => text.includes(skill)).map((skill) => skill.replace("доработк", "доработка")))];

@@ -75,7 +75,7 @@ export function scoreOpportunity(item) {
   if (components.monetary >= 10) scoreReasons.push("useful stated budget"); else if (!item.budget) scoreReasons.push("budget not stated");
   if (components.clarity >= 4) scoreReasons.push("clear scope and delivery signals");
   scoreReasons.push(...risk.reasons);
-  return { ...item, score, preliminaryScore: score, scoreBreakdown, eligibility, suppressedReason, scoreReasons, scoringVersion: 3 };
+  return { ...item, score, preliminaryScore: score, scoreBreakdown, eligibility, suppressedReason, scoreReasons, scoringVersion: 4 };
 }
 
 export function distributionStats(values) {

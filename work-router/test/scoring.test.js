@@ -21,6 +21,7 @@ test("eligibility suppresses full-time, senior/lead, mismatched domains, and spa
   assert.equal(byId["unknown"].eligibility, Eligibility.LOW_PRIORITY);
   assert.ok(byId["tech-lead"].suppressedReason);
   assert.equal(scoreOpportunity(classifyOpportunity({ title: "#vacancy #React #Node remote", description: "Vacancy: React Node developer, remote" })).eligibility, Eligibility.SUPPRESSED);
+  assert.equal(scoreOpportunity(classifyOpportunity({ title: "Middle Python Backend", description: "Ставка 160–240k, удалённо, фуллтайм работа по МСК" })).eligibility, Eligibility.SUPPRESSED);
 });
 
 test("benchmark ranks freelance projects above employment and unrelated work", () => {
@@ -70,10 +71,10 @@ test("state migration preserves the old score for audit and recalculates ranking
   fs.writeFileSync(path.join(root, "state.json"), JSON.stringify({ version: 2, opportunities: [{ id: "old", title: "Senior Frontend Developer full-time", description: "Senior React developer, full-time salary per month", classification: "FULL_TIME_JOB", score: 50, preliminaryScore: 60 }] }));
   const store = createStore(root, { direct: true });
   const item = store.state.opportunities[0];
-  assert.equal(store.state.version, 4);
-  assert.equal(JSON.parse(fs.readFileSync(path.join(root, "state.json"), "utf8")).version, 4);
+  assert.equal(store.state.version, 5);
+  assert.equal(JSON.parse(fs.readFileSync(path.join(root, "state.json"), "utf8")).version, 5);
   assert.equal(item.legacyScore, 50);
-  assert.equal(item.scoringVersion, 3);
+  assert.equal(item.scoringVersion, 4);
   assert.equal(item.eligibility, Eligibility.SUPPRESSED);
   assert.ok(item.score < 30);
 });
