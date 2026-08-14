@@ -55,12 +55,20 @@ export function loadConfig(root = process.cwd()) {
     },
     source: {
       maxLlmPerCycle: Math.max(1, Number(env.SOURCE_MAX_LLM_PER_CYCLE || 5)),
+      maxCheapPerCycle: Math.max(1, Number(env.SOURCE_MAX_CHEAP_LLM_PER_CYCLE || 40)),
+      maxDeepPerCycle: Math.max(1, Number(env.SOURCE_MAX_DEEP_LLM_PER_CYCLE || env.SOURCE_MAX_LLM_PER_CYCLE || 12)),
       minKeywordMatches: Math.max(1, Number(env.SOURCE_MIN_KEYWORD_MATCHES || 2)),
       minBudgetRub: Math.max(0, Number(env.SOURCE_MIN_BUDGET_RUB || 0)),
       skillKeywords: (env.SKILL_KEYWORDS || "").split(",").map((x) => x.trim().toLowerCase()).filter(Boolean),
       excludeKeywords: (env.SOURCE_EXCLUDE_KEYWORDS || "").split(",").map((x) => x.trim().toLowerCase()).filter(Boolean),
       playwrightCorePath: env.PLAYWRIGHT_CORE_PATH,
       playwrightExecutablePath: env.PLAYWRIGHT_EXECUTABLE_PATH,
+    },
+    notifications: {
+      hot: Math.max(0, Math.min(100, Number(env.NOTIFICATION_HOT_SCORE || 70))),
+      good: Math.max(0, Math.min(100, Number(env.NOTIFICATION_GOOD_SCORE || 55))),
+      maybe: Math.max(0, Math.min(100, Number(env.NOTIFICATION_MAYBE_SCORE || 45))),
+      outboxMaxAttempts: Math.max(1, Number(env.NOTIFICATION_MAX_ATTEMPTS || 5)),
     },
   };
 }

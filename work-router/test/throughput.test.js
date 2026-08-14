@@ -13,6 +13,7 @@ import { notificationBand, createNotifications } from "../src/notifications.js";
 import { defaultTelegramSources, normalizeTelegramUsername } from "../src/source-registry.js";
 import { parseTelegramChannelHtml, fetchTelegramSource } from "../src/telegram-public.js";
 import { runDiscoveryCycle } from "../src/pipeline.js";
+import { generateSourceReport } from "../src/report.js";
 
 test("budget parser handles ranges, multipliers, currencies, and negotiable values", () => {
   assert.deepEqual(parseBudget("Бюджет $500-$1000"), { min: 500, max: 1000, currency: "USD", confidence: "high", raw: "$500-$1000" });
@@ -134,4 +135,12 @@ test("discovery cycle isolates source and analyzer failures", async () => {
   assert.equal(summary.scanned.good, 1);
   assert.equal(summary.llmErrors, 1);
   assert.equal(summary.completed, true);
+});
+
+test("24h report ranks sources without mutating priorities", () => {
+  const state = { sources: [{ username: "good", priority: "high", qualityScore: 80, stats: { messagesSeen: 100, opportunitiesDetected: 20, relevantOpportunities: 10, spam: 5, projectsWithBudget: 8, duplicates: 3 } }], cycles: [{ startedAt: "2026-08-14T10:00:00Z", newOpportunities: 5, deepAnalyzed: 2, HOT: 1 }] };
+  const report = generateSourceReport(state, new Date("2026-08-14T12:00:00Z"));
+  assert.match(report, /@good/);
+  assert.match(report, /Deep analyzed: 2/);
+  assert.equal(state.sources[0].priority, "high");
 });

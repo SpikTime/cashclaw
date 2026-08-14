@@ -17,7 +17,13 @@ export async function sendMessage(config, chatId, text) {
     body: JSON.stringify({ chat_id: chatId, text: text.slice(0, 4000), disable_web_page_preview: true }),
     signal: AbortSignal.timeout(20_000),
   });
-  if (!response.ok) throw new Error(`Telegram sendMessage failed: ${response.status}`);
+  if (!response.ok) {
+    let body = {}; try { body = await response.json(); } catch {}
+    const error = new Error(`Telegram sendMessage failed: ${response.status}`);
+    error.status = response.status;
+    error.retryAfter = Number(body.parameters?.retry_after || response.headers.get("retry-after") || 0);
+    throw error;
+  }
 }
 
 export function isAllowed(config, message) {
