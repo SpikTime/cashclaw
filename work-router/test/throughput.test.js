@@ -98,6 +98,14 @@ test("notification bands include digest, fast alert, and bounty manual review", 
   assert.equal(notices.some((x) => x.kind === "bounty_review"), true);
 });
 
+test("notifications do not promote unreviewed full-time or unknown items", () => {
+  const notices = createNotifications([
+    { id: "full", title: "Full time", classification: "FULL_TIME_JOB", preliminaryScore: 90, skillMatch: 95, ageMinutes: 10, proposalCost: 0 },
+    { id: "unknown", title: "Unknown", classification: "UNKNOWN", preliminaryScore: 80 },
+  ], "1");
+  assert.deepEqual(notices, []);
+});
+
 test("registry contains requested channels and validates usernames", () => {
   assert.equal(defaultTelegramSources().length, 11);
   assert.equal(defaultTelegramSources()[0].username, "job_for_bots");

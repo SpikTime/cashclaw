@@ -71,7 +71,7 @@ async function cycle() {
     await processManualTelegram();
     const summary = await runDiscoveryCycle({ store, sources: discoverySources(), analyze: deepAnalyze, maxCheap: config.source.maxCheapPerCycle, maxDeep: config.source.maxDeepPerCycle, chatId: [...config.telegram.allowedChats][0], thresholds: config.notifications });
     for (const source of store.state.sources) source.qualityScore = calculateSourceQuality(source);
-    try { await processOutbox(store, (chatId, text) => sendMessage(config.telegram, chatId, text), { maxAttempts: config.notifications.outboxMaxAttempts }); }
+    try { const sentBefore = store.state.outbox.filter((item) => item.status === "sent").length; await processOutbox(store, (chatId, text) => sendMessage(config.telegram, chatId, text), { maxAttempts: config.notifications.outboxMaxAttempts }); summary.notificationsSent += store.state.outbox.filter((item) => item.status === "sent").length - sentBefore; summary.notificationsQueued = store.state.outbox.filter((item) => ["pending", "retry", "sending"].includes(item.status)).length; summary.deliveryErrors = store.state.outbox.filter((item) => item.status === "dead").length; }
     catch (error) { summary.deliveryErrors += 1; log("warn", "outbox_cycle_failed", { error: error.message }); }
     store.save(); log("info", "discovery_cycle_completed", { cycleId: summary.id, scanned: summary.scanned, newOpportunities: summary.newOpportunities, deepAnalyzed: summary.deepAnalyzed, sourceErrors: summary.sourceErrors.length }); return summary;
   } finally { running = false; }
