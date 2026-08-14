@@ -84,13 +84,13 @@ test("outbox retries transient failures then marks sent without duplicates", asy
 });
 
 test("notification bands include digest, fast alert, and bounty manual review", () => {
-  assert.equal(notificationBand(70), "HOT");
-  assert.equal(notificationBand(55), "GOOD");
-  assert.equal(notificationBand(45), "MAYBE");
-  assert.equal(notificationBand(44), "SILENT");
+  assert.equal(notificationBand(80), "HOT");
+  assert.equal(notificationBand(67), "GOOD");
+  assert.equal(notificationBand(52), "MAYBE");
+  assert.equal(notificationBand(51), "SILENT");
   const notices = createNotifications([
     { id: "h", title: "Hot", score: 80, preliminaryScore: 80, skillMatch: 90, ageMinutes: 20, proposalCost: 0 },
-    { id: "m1", title: "Maybe 1", score: 50 }, { id: "m2", title: "Maybe 2", score: 49 },
+    { id: "m1", title: "Maybe 1", score: 60 }, { id: "m2", title: "Maybe 2", score: 55 },
     { id: "b", title: "Bounty", score: 80, acquisitionModel: "bounty", rewardTrust: { manualReview: true, advertisedReward: 100 } },
   ], "1");
   assert.equal(notices.filter((x) => x.kind === "maybe_digest").length, 1);

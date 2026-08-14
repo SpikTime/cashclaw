@@ -65,9 +65,9 @@ export function loadConfig(root = process.env.CASHCLAW_CONFIG_ROOT || process.cw
       playwrightExecutablePath: env.PLAYWRIGHT_EXECUTABLE_PATH,
     },
     notifications: {
-      hot: Math.max(0, Math.min(100, Number(env.NOTIFICATION_HOT_SCORE || 70))),
-      good: Math.max(0, Math.min(100, Number(env.NOTIFICATION_GOOD_SCORE || 55))),
-      maybe: Math.max(0, Math.min(100, Number(env.NOTIFICATION_MAYBE_SCORE || 45))),
+      hot: Math.max(0, Math.min(100, Number(env.NOTIFICATION_HOT_SCORE || 80))),
+      good: Math.max(0, Math.min(100, Number(env.NOTIFICATION_GOOD_SCORE || 67))),
+      maybe: Math.max(0, Math.min(100, Number(env.NOTIFICATION_MAYBE_SCORE || 52))),
       outboxMaxAttempts: Math.max(1, Number(env.NOTIFICATION_MAX_ATTEMPTS || 5)),
     },
   };
