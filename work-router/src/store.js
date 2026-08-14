@@ -32,6 +32,7 @@ export function createStore(root = process.cwd(), options = {}) {
   const file = path.join(base, "state.json");
   let loaded = {}; try { loaded = JSON.parse(fs.readFileSync(file, "utf8")); } catch {}
   const state = migrateState(loaded); const seen = new Set(state.seen);
+  if (Number(loaded.version || 0) !== CURRENT_STATE_VERSION) atomicWrite(file, JSON.stringify(state, null, 2));
   return { state, file, has(id) { return seen.has(id); }, mark(id) { seen.add(id); state.seen = [...seen].slice(-10000); }, addJob(job) { state.jobs.unshift(job); state.jobs = state.jobs.slice(0, 1000); }, getJob(id) { return state.jobs.find((item) => item.id === id); }, updateJob(id, patch) { const job = state.jobs.find((item) => item.id === id); if (job) Object.assign(job, patch, { updatedAt: new Date().toISOString() }); }, save() { atomicWrite(file, JSON.stringify(state, null, 2)); } };
 }
 export function takeLlmQuota(store, limit, now = new Date()) { const date = now.toISOString().slice(0, 10); if (store.state.llmDate !== date) { store.state.llmDate = date; store.state.llmCount = 0; } if (store.state.llmCount >= limit) return false; store.state.llmCount += 1; return true; }

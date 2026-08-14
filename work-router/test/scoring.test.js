@@ -71,6 +71,7 @@ test("state migration preserves the old score for audit and recalculates ranking
   const store = createStore(root, { direct: true });
   const item = store.state.opportunities[0];
   assert.equal(store.state.version, 4);
+  assert.equal(JSON.parse(fs.readFileSync(path.join(root, "state.json"), "utf8")).version, 4);
   assert.equal(item.legacyScore, 50);
   assert.equal(item.scoringVersion, 3);
   assert.equal(item.eligibility, Eligibility.SUPPRESSED);
