@@ -1,0 +1,17 @@
+{
+  "name": "cashclaw-work-router",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node src/index.js",
+    "once": "node src/index.js --once",
+    "test": "node --test",
+    "build": "node scripts/build.mjs",
+    "typecheck": "node scripts/build.mjs",
+    "validate:skills": "node scripts/validate-skills.mjs",
+    "report:24h": "node scripts/source-24h-report.mjs",
+    "benchmark:ranking": "node scripts/ranking-benchmark.mjs"
+  },
+  "engines": { "node": ">=20" }
+}
